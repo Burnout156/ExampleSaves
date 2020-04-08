@@ -6,6 +6,7 @@ using UnityEngine;
 public struct SaveStructure
 {
     public PlayerStatus player;
+    public bool isAutoSave;
 }
 
 public class JsonExample : MonoBehaviour
@@ -23,10 +24,7 @@ public class JsonExample : MonoBehaviour
 
     void Start()
     {
-        /*
-        AutoSave();
-        MainSave = JsonUtility.FromJson<SaveStructure>(Load());       
-        */
+
     }
 
     public void Save(Player player)
@@ -47,7 +45,7 @@ public class JsonExample : MonoBehaviour
         GameObject.FindObjectOfType<Player>().UpdateCoinText();
     }
 
-    public void AutoSaving()
+    public static void AutoSaving()
     {
         if (!Directory.Exists(folderPath)) //se a pasta do save não existir, será criada uma nova pasta
         {
@@ -61,6 +59,23 @@ public class JsonExample : MonoBehaviour
 
         string json = JsonUtility.ToJson(MainSave); //passar uma estrutura com variáveis para uma string
         File.WriteAllText(filePath, json);
+    }
+
+    public static void AutoLoading() //também pode funcionar como um auto carregamento, apenas precisando colocar no Start
+    {
+        if (File.Exists(filePath))
+        {
+            data = File.ReadAllText(filePath);
+            MainSave = JsonUtility.FromJson<SaveStructure>(data);
+            print("Arquivo lido com sucesso: " + data);
+            GameObject.FindObjectOfType<Player>().coins = MainSave.player.coins;
+            GameObject.FindObjectOfType<Player>().UpdateCoinText();
+        }
+
+        else
+        {
+            print("Arquivo não existe: " + data);
+        }
     }
 
     public void Load() //também pode funcionar como um auto carregamento, apenas precisando colocar no Start
